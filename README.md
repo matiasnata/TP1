@@ -1,23 +1,11 @@
-<div align="right">
-    <img width="32px" src="img/algo2.svg">
-</div>
-
-# TP
-
-> [!IMPORTANT]
-> Esto es una plantilla del informe donde cada sección está delimitada por su título. Se recomienda mantener las secciones y tomar los ejemplos de las mismas para hacer el informe. El contenido de las secciones y comentarios como este deben ser eliminados del informe presentado.
-
 ## Información del estudiante
 
-* (Nombre y Apellido)
-* (Padrón)
-* (Mail)
-* (Username de GitHub)
+* Matias Armida
+* Padrón: 114941
+* armidamatias@gmail.com
+* matiasnata
 
 ---
-
-> [!WARNING]
-> Tener en cuenta que el informe se solicita en el ámbito universitario; el texto debe ser coherente, gramatical y ortográficamente correcto y con vocabulario adecuado para dicho contexto.
 
 ## Índice
 * [1. Instrucciones](#1-Instrucciones)
@@ -38,49 +26,57 @@
 
 ### 1.1. Compilar el proyecto
 ```bash
-comando
+gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O2 -g src/*.c main.c -o tp1
 ```
+
 
 ### 1.2. Ejecutar las pruebas
 ```bash
-comando
+gcc -std=c99 -Wall -Wextra -pedantic -g -Isrc -o pruebas_alumno pruebas/pruebas_alumno.c pruebas/pa2m.c src/tp1.c src/leer_linea.c
+./pruebas_alumno
 ```
 
 ### 1.3. Ejecutar el programa con Valgrind
 ```bash
-comando
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./tp1 pokedex.csv mostrar-todo
 ```
 
 ## 2. Funcionamiento
-Explicar **qué** hace el TP implementado, aclarando todas las decisiones de funcionamiento que no estaban definidas por el enunciado. Se deben incluir todos los diagramas que consideren necesarios para explicar el funcionamiento del programa.
 
-> [!IMPORTANT]
-> Es muy importante entender la *diferencia entre qué y cómo*. En esta sección **NO** se busca una explicación de cómo implementaste el programa, qué funciones usaste, en qué línea, etc.; se busca una explicación de **qué** es lo que hace el programa en líneas generales. 
+El programa recibe como parámetros la ruta de un archivo de texto con una pokédex. La pokédex consiste en una lista de pokemon, uno por línea y cada uno con su respectivo nombre, velocidad, peso y tipo de rareza. Por último recibe un comando que indica qué operación realizar con los datos (archivo y pokedex), mostrando el resultado por pantalla.
 
-> [!WARNING]
-> Es importante usar diagramas para explicar los conceptos de forma clara, pero el exceso será negativo. Los diagramas deben tener un fin explicativo y, por lo general, sirven para reemplazar uno o múltiples párrafos de explicación.
+Al iniciar, el programa lee el archivo completo y valida de a una línea por vez. El primer caso es que la línea no cumpla con el formato esperado y se descarte para poder continuar con la lectura de las líneas restantes si es que las hay. El segundo caso es que la línea sea válida, la cual se agregará a un conjunto de pokemon.
+En el caso que haya pokemon duplicado, es decir, que el nombre sea igual (sin distinguir mayúsculas y minúsculas) se conservara en el conjunto únicamente la primera aparición del pokemon en el archivo. 
+Además, este conjunto se mantiene siempre ordenado alfabéticamente por nombre, sin importar el orden en que los pokemon fueron apareciendo en el archivo.
 
-## 2. Funcionamiento (EJEMPLO)
-El programa recibe 7 números del usuario y una vez obtenidos todos los muestra en pantalla. Para esto define un vector estático de 7 elementos y llena el mismo con los datos que inserta el usuario; cuando termina de insertar todos los números procede a imprimirlos en pantalla.
-<div align="center">
-  <img src="img/diagrama_flujo_programa.svg" width="70%">
-  <p>Diagrama de flujo del programa explicado con más detalle.</p>
-</div>
+[Diagrama de flujo de lectura del archivo](img/diagrama_flujo_programa.svg)
+
+Según el comando recibido, el programa realiza una de las siguientes acciones:
+
+1) buscar-nombre: busca un pokemon por su nombre (sin distinguir mayúsculas de minúsculas). En el caso de ser encontrado, muestra sus datos, caso contrario informa que no se encuentra en la pokedex.
+
+2) mostrar-uno: elige un pokemon al azar y muestra sus datos.
+
+3) mostrar-todo: muestra todos los pokemon cargados, en orden alfabético.
+
+4) mostrar-rarezas: muestra todos los pokemon agrupados por rareza (primero los comunes, luego los raros y por último los legendarios), respetando el orden alfabético dentro de cada grupo.
+
+Además, el programa permite combinar los datos de dos pokédex en una nueva independiente (sin duplicar los pokemon repetidos entre ambas, priorizando siempre los datos de la primera) y guardar el contenido de una pokédex en un archivo de texto.
 
 ## 3. Estructura
-Explicar cómo se implementó la/s estructura/s pedida/s en el [enunciado](./ENUNCIADO.md). En esta sección el objetivo es explicar en líneas generales, no técnicas, qué contiene la estructura, para qué y por qué.
+Para implementar la estrcutura TDA (tp1_t), definí una estructura con 3 campos.
+1) *pokemones: Un puntero a la dirección de un bloque de memoria dinámica (en el Heap) donde se almacenan contiguamente las estructuras pokemon. 
 
-## 3. Estructura (EJEMPLO)
-Para implementar la estructura decidí hacerlo con un campo..., además tiene un puntero que... y eso permite que....
+2) cantidad: Es de tipo size_t y representa el tamaño lógico del vector, es decir, el número de pok emonesválidos que ya fueron insertados en la estructura.
+
+3) capacidad: Es de tipo size_t. Representa la memoria real asignada al vector dinámico. Indica el límite de elementos que el bloque actual puede contener sin realizar una redimensión (realloc).
+
+Más allá de que lo pida el enunciado, el vector dinámico nos permite gestionar de forma mas eficiente el uso de la memoria. Al inicio del programa, la estructura puede no tener memoria reservada para el vector (capacidad 0). A medida que se procesa el archivo y se necesita almacenar un nuevo pokemon, se evalúa si se necesita realocar memoria. En el caso de precisar más memoria, se utiliza la función realloc para solicitar al sistema operativo un bloque más grande (duplicando la capacidad actual), copiando de forma automática los datos existentes al nuevo bloque si es necesario reubicarlo en el Heap (en el caso que falle no se pierde la información previa). Esto permite que el programa solo utilice la memoria necesaria.
 
 ### 3.1. Diagrama de memoria
 Realizar un diagrama de memoria de la estructura de memoria durante la ejecución del programa, esto debe incluir el stack y el heap con las estructuras contenidas en ellos.
 
 ### 3.1 Diagrama de memoria (EJEMPLO)
-<div align="center">
-  <img src="img/diagrama_memoria__1.svg" width="70%">
-  <p>Diagrama de memoria de la estructura.</p>
-</div>
 
 
 ### 3.2. Análisis de complejidades
