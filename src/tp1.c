@@ -13,11 +13,15 @@ struct tp1 {
 	size_t capacidad;
 };
 
+/**
+ * s1 y s2 deben ser punteros válidos a cadenas de caracteres (terminados en \0).
+ *
+ * Devuelve un número menor a 0 si s1 va antes alfabéticamente, 0 si son iguales (sin distinguir mayúsculas de minúsculas), o mayor a 0 si s1 va después.
+ */
 int comparar_nombres(const char *s1, const char *s2)
 {
 	unsigned char c1;
 	unsigned char c2;
-
 	while (*s1 != '\0' && *s2 != '\0') {
 		c1 = (unsigned char)tolower((unsigned char)*s1);
 		c2 = (unsigned char)tolower((unsigned char)*s2);
@@ -29,9 +33,14 @@ int comparar_nombres(const char *s1, const char *s2)
 	}
 	c1 = (unsigned char)tolower((unsigned char)*s1);
 	c2 = (unsigned char)tolower((unsigned char)*s2);
-	return (int)c1 - (int)c2;
+	return ((int)c1 - (int)c2);
 }
 
+/**
+ * tp1 debe ser un puntero válido a un TDA inicializado, y nombre un string válido (terminado en \0). El arreglo de pokemones debe estar previamente ordenado alfabéticamente.
+ *
+ * Devuelve un size_t con el índice donde debería insertarse el nuevo pokemon para mantener el orden alfabético del vector.
+ */
 size_t buscar_posicion_orden(tp1_t *tp1, const char *nombre)
 {
 	size_t i = 0;
@@ -42,6 +51,11 @@ size_t buscar_posicion_orden(tp1_t *tp1, const char *nombre)
 	return i;
 }
 
+/**
+ * --
+ *
+ * Devuelve true si ambos punteros son válidos y son iguales ignorando mayúsculas/minúsculas, o false en caso contrario.
+ */
 bool nombres_son_iguales(const char *s1, const char *s2)
 {
 	if (!s1 || !s2) {
@@ -50,6 +64,11 @@ bool nombres_son_iguales(const char *s1, const char *s2)
 	return comparar_nombres(s1, s2) == 0;
 }
 
+/**
+ * nombre debe ser un string válido (terminado en \0) y tp1 un TDA inicializado con su cantidad actualizada.
+ *
+ * Devuelve true si la longitud del nombre es mayor a cero y no existe otro pokemon con ese mismo nombre en el TDA. Devuelve false si está vacío o repetido.
+ */
 bool nombre_valido(char *nombre, tp1_t *tp1)
 {
 	if (strlen(nombre) == 0) {
@@ -66,11 +85,14 @@ bool nombre_valido(char *nombre, tp1_t *tp1)
 	return !pokemon_repetido;
 }
 
+/**
+ * str es un string válido (terminado en \0) y velocidad es un puntero a una variable entera donde se guardará el resultado.
+ * Devuelve true y actualiza el valor de *velocidad si el string representa  un número entero entre 1 y 99. Devuelve false si contiene caracteres no numéricos o está fuera del rango.
+ */
 bool velocidad_valida(char *str, int *velocidad)
 {
 	char *fin;
 	long valor;
-
 	if (!str || *str == '\0') {
 		return false;
 	}
@@ -85,11 +107,14 @@ bool velocidad_valida(char *str, int *velocidad)
 	return true;
 }
 
+/**
+ * str es un string válido (terminado en \0).
+ * Devuelve true y actualiza el valor de *peso si el string representa un número con decimales mayor a 0.0. Devuelve false si el formato es inválido o el peso es nulo o negativo.
+ */
 bool peso_valido(char *str, float *peso)
 {
 	char *fin;
 	float valor;
-
 	if (!str || *str == '\0') {
 		return false;
 	}
@@ -104,6 +129,10 @@ bool peso_valido(char *str, float *peso)
 	return true;
 }
 
+/**
+ * str debe ser un string válido (terminado en \0) y rareza es un puntero a la enumeración rareza_pokemon.
+ * Devuelve true y asigna el valor correspondiente al enum. Devuelve false de lo contrario.
+ */
 bool rareza_valida(char *str, enum rareza_pokemon *rareza)
 {
 	if (!str || str[0] == '\0' || str[1] != '\0') {
@@ -121,6 +150,10 @@ bool rareza_valida(char *str, enum rareza_pokemon *rareza)
 	return true;
 }
 
+/**
+ * tp1 es un TDA válido y nombre es un string válido (terminado en \0).
+ * Inserta el pokemon en la estructura manteniendo el orden alfabético. Devuelve 0 (EXITO) si se insertó correctamente, o -1 (ERROR) si falló la reserva de memoria dinámica con malloc o realloc.
+ */
 int agregar_pokemon(tp1_t *tp1, char *nombre, int velocidad, float peso,
 		    enum rareza_pokemon rareza)
 {
@@ -157,6 +190,10 @@ int agregar_pokemon(tp1_t *tp1, char *nombre, int velocidad, float peso,
 	return EXITO;
 }
 
+/**
+ * linea es un puntero a una cadena modificable de caracteres (separado por comas) y tp1 es un TDA válido
+ * Modifica el string linea reemplazando las comas por \0 para separar cada campo. Valida cada campo y si todos son correctos, invoca a agregar_pokemon. Devuelve 0 (EXITO) tanto si la línea se agregó como si se descartó por formato inválido (para permitir que el programa siga leyendo). Devuelve -1 (ERROR) si hay punteros nulos o falla la memoria.
+ */
 int procesar_linea(char *linea, tp1_t *tp1)
 {
 	if ((!tp1) || (!linea)) {

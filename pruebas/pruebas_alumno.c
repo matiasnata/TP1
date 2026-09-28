@@ -1,12 +1,12 @@
 #include "pa2m.h"
+#include "../src/tp1.h"
 #include <stdio.h>
-#include "tp1.h"
 #include <string.h>
 
-void crear_archivo(char *nombre, char *contenido_archivo)
+void crear_archivo(const char *nombre, const char *contenido)
 {
 	FILE *archivo = fopen(nombre, "w");
-	fprintf(archivo, "%s", contenido_archivo);
+	fprintf(archivo, "%s", contenido);
 	fclose(archivo);
 }
 
@@ -16,10 +16,10 @@ void prueba_leer_archivo()
 	pa2m_afirmar(inexistente == NULL,
 		     "Leer un archivo inexistente devuelve NULL");
 	crear_archivo("prueba.csv", "Magikarp,10,5.2,C\n"
-				     "lineamala,sincomas\n"
-				     "Suicune,70,80,L\n"
-				     "pikachu,60,6,C\n"
-				     "PIKACHU,99,6,L\n");
+				    "lineamala,sincomas\n"
+				    "Suicune,70,80,L\n"
+				    "pikachu,60,6,C\n"
+				    "PIKACHU,99,6,L\n");
 	tp1_t *tp1 = tp1_leer_archivo("prueba.csv");
 	pa2m_afirmar(tp1 != NULL, "Leer un archivo válido no devuelve NULL");
 	pa2m_afirmar(
@@ -61,6 +61,14 @@ void prueba_buscar_orden()
 	remove("prueba.csv");
 }
 
+bool contar(struct pokemon *p, void *extra)
+{
+	(void)p;
+	int *contador = extra;
+	(*contador)++;
+	return *contador < 2;
+}
+
 void prueba_iterar()
 {
 	crear_archivo("prueba.csv",
@@ -91,7 +99,7 @@ void prueba_combinar()
 	tp1_destruir(b);
 	pa2m_afirmar(
 		tp1_buscar_pokemon(combinado, "pikachu") != NULL,
-		"El TP1 combinado es independiente y sigue accesible tras destruir los originales");
+		"El TP1 combinado es independiente y sigue accesible después de destruir los originales");
 	tp1_destruir(combinado);
 	remove("a.csv");
 	remove("b.csv");
@@ -121,7 +129,7 @@ void prueba_destruir()
 
 int main()
 {
-	pa2m_nuevo_grupo("=========== PRUEBAS DEL TP1: POKEDEX ===========");
+	pa2m_nuevo_grupo(" PRUEBAS DEL TP1: POKEDEX ");
 	pa2m_nuevo_grupo("tp1_leer_archivo");
 	prueba_leer_archivo();
 	pa2m_nuevo_grupo("tp1_buscar_pokemon");

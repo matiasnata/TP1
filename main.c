@@ -4,6 +4,10 @@
 #include <string.h>
 #include <time.h>
 
+/**
+ * p debe ser un puntero válido a una estructura pokemon (no nulo) y sus campos (nombre, velocidad, peso y rareza) deben estar correctamente inicializados
+ * Imprime por pantalla los datos del pokemon recibido por parámetro.
+ */
 void imprimir(struct pokemon *p)
 {
 	char letra = 'C';
@@ -21,20 +25,16 @@ int main(int argc, char *argv[])
 	tp1_t *tp1 = tp1_leer_archivo(argv[1]);
 	const char *comando = argv[2];
 	size_t i;
-
 	if (strcmp(comando, "buscar-nombre") == 0) {
 		imprimir(tp1_buscar_pokemon(tp1, argv[3]));
-
 	} else if (strcmp(comando, "mostrar-uno") == 0) {
 		srand((unsigned int)time(NULL));
 		imprimir(tp1_buscar_orden(tp1,
 					  (size_t)rand() % tp1_cantidad(tp1)));
-
 	} else if (strcmp(comando, "mostrar-todo") == 0) {
 		for (i = 0; i < tp1_cantidad(tp1); i++) {
 			imprimir(tp1_buscar_orden(tp1, i));
 		}
-
 	} else if (strcmp(comando, "mostrar-rarezas") == 0) {
 		enum rareza_pokemon r;
 		for (r = RAREZA_COMUN; r <= RAREZA_LEGENDARIO; r++) {
@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-
 	tp1_destruir(tp1);
 	return 0;
 }
