@@ -86,7 +86,7 @@ void prueba_iterar()
 
 void prueba_combinar()
 {
-	crear_archivo("a.csv", "Pikachu,50,6,C\nRaichu,60,10,C\n");
+	crear_archivo("a.csv", "Pikachu,50,6,C\nRaichu,60,10,C\n");     
 	crear_archivo("b.csv", "pikachu,99,99,L\nMew,10,4,L\n");
 	tp1_t *a = tp1_leer_archivo("a.csv");
 	tp1_t *b = tp1_leer_archivo("b.csv");

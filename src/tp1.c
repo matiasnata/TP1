@@ -20,12 +20,12 @@ struct tp1 {
  */
 int comparar_nombres(const char *s1, const char *s2)
 {
-	unsigned char c1;
+	unsigned char c1; 
 	unsigned char c2;
-	while (*s1 != '\0' && *s2 != '\0') {
-		c1 = (unsigned char)tolower((unsigned char)*s1);
+	while (*s1 != '\0' && *s2 != '\0') { 
+		c1 = (unsigned char)tolower((unsigned char)*s1); 
 		c2 = (unsigned char)tolower((unsigned char)*s2);
-		if (c1 != c2) {
+		if (c1 != c2) { 
 			return (int)c1 - (int)c2;
 		}
 		s1++;
@@ -33,7 +33,7 @@ int comparar_nombres(const char *s1, const char *s2)
 	}
 	c1 = (unsigned char)tolower((unsigned char)*s1);
 	c2 = (unsigned char)tolower((unsigned char)*s2);
-	return ((int)c1 - (int)c2);
+	return ((int)c1 - (int)c2); //devuelvo 0 son iguales.
 }
 
 /**
@@ -45,7 +45,7 @@ size_t buscar_posicion_orden(tp1_t *tp1, const char *nombre)
 {
 	size_t i = 0;
 	while (i < tp1->cantidad &&
-	       comparar_nombres(tp1->pokemones[i].nombre, nombre) < 0) {
+	       comparar_nombres(tp1->pokemones[i].nombre, nombre) < 0) { // si da positivo es porq encontro la ubicacion (i)
 		i++;
 	}
 	return i;
@@ -71,12 +71,12 @@ bool nombres_son_iguales(const char *s1, const char *s2)
  */
 bool nombre_valido(char *nombre, tp1_t *tp1)
 {
-	if (strlen(nombre) == 0) {
+	if (strlen(nombre) == 0) { //Si el nombre no tiene ni una letra.
 		return false;
 	}
 	bool pokemon_repetido = false;
 	size_t i = 0;
-	while ((!pokemon_repetido) && (i < tp1->cantidad)) {
+	while ((!pokemon_repetido) && (i < tp1->cantidad)) { 
 		if (nombres_son_iguales(tp1->pokemones[i].nombre, nombre)) {
 			pokemon_repetido = true;
 		}
@@ -96,8 +96,8 @@ bool velocidad_valida(char *str, int *velocidad)
 	if (!str || *str == '\0') {
 		return false;
 	}
-	valor = strtol(str, &fin, 10);
-	if (*fin != '\0') {
+	valor = strtol(str, &fin, 10); 
+	if (*fin != '\0') { //Si el caracter que freno strtol no es '\0'(el final de la palabra) es porque habia basura en el medio (formato invalido)
 		return false;
 	}
 	if (valor < 1 || valor > 99) {
@@ -115,14 +115,14 @@ bool peso_valido(char *str, float *peso)
 {
 	char *fin;
 	float valor;
-	if (!str || *str == '\0') {
+	if (!str || *str == '\0') { 
 		return false;
 	}
-	valor = strtof(str, &fin);
-	if (*fin != '\0') {
+	valor = strtof(str, &fin); 
+	if (*fin != '\0') { 
 		return false;
 	}
-	if (valor <= 0.0f) {
+	if (valor <= 0.0f) { 
 		return false;
 	}
 	*peso = valor;
@@ -135,7 +135,7 @@ bool peso_valido(char *str, float *peso)
  */
 bool rareza_valida(char *str, enum rareza_pokemon *rareza)
 {
-	if (!str || str[0] == '\0' || str[1] != '\0') {
+	if (!str || str[0] == '\0' || str[1] != '\0') { 
 		return false;
 	}
 	if (str[0] == 'C') {
@@ -145,7 +145,7 @@ bool rareza_valida(char *str, enum rareza_pokemon *rareza)
 	} else if (str[0] == 'L') {
 		*rareza = RAREZA_LEGENDARIO;
 	} else {
-		return false;
+		return false; 
 	}
 	return true;
 }
@@ -177,7 +177,7 @@ int agregar_pokemon(tp1_t *tp1, char *nombre, int velocidad, float peso,
 	if (!nombre_copia) {
 		return ERROR;
 	}
-	strcpy(nombre_copia, nombre);
+	strcpy(nombre_copia, nombre); 
 	size_t posicion = buscar_posicion_orden(tp1, nombre);
 	for (size_t i = tp1->cantidad; i > posicion; i--) {
 		tp1->pokemones[i] = tp1->pokemones[i - 1];
@@ -199,7 +199,7 @@ int procesar_linea(char *linea, tp1_t *tp1)
 	if ((!tp1) || (!linea)) {
 		return ERROR;
 	}
-	char *coma1 = strchr(linea, ',');
+	char *coma1 = strchr(linea, ','); 
 	if (!coma1) {
 		printf("Línea con formáto inválido. Se ignorara la misma y se seguirá con el resto.");
 		return EXITO;
@@ -265,7 +265,7 @@ tp1_t *tp1_leer_archivo(const char *nombre)
 	char *linea = leer_linea(archivo_pokemones);
 	while (linea != NULL) {
 		procesar_linea(linea, tp1);
-		free(linea);
+		free(linea); 
 		linea = leer_linea(archivo_pokemones);
 	}
 	fclose(archivo_pokemones);
